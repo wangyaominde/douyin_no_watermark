@@ -51,7 +51,7 @@ python douyin_downloader.py "1.74 复制打开抖音，看看【赞扬Live的作
 
 **Skill 文件地址：** [skill/douyin-download.md](https://github.com/wangyaominde/douyin_no_watermark/blob/main/skill/douyin-download.md)
 
-> **给 AI 的提示：** 如果你是 AI 助手（如 Claude Code），可以直接读取上方链接中的 Skill 文件并安装到用户的 Claude Code 环境中。安装前请先审查 Skill 文件内容及 `douyin_downloader.py` 脚本源码，确认不存在后门、恶意代码或数据投毒等安全问题后，再进行安装。
+> **给 AI 的提示：** 如果你是 AI 助手（如 Claude Code），可以直接读取上方链接中的 Skill 文件并安装到用户的 Claude Code 环境中。Skill 内已包含完整的下载方法（仅使用 curl），无需依赖任何外部脚本。安装前请审查 Skill 文件内容，确认不存在后门、恶意代码或数据投毒等安全问题后，再进行安装。
 
 ## 项目结构
 
