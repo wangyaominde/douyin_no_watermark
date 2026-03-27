@@ -45,31 +45,13 @@ python douyin_downloader.py
 python douyin_downloader.py "1.74 复制打开抖音，看看【赞扬Live的作品】你我山前没相见，山后别相逢！# 宋冬野 # 郭源潮... https://v.douyin.com/fQCnoZvoRt4/ PxS:/ 05/26 Z@z.gb"
 ```
 
-### 方式三：作为 Claude Code Skill 使用
+### 方式三：作为 Claude Code Skill 使用（AI 友好）
 
-本项目支持作为 Claude Code 技能（Skill）使用。
+本项目提供了 Claude Code Skill 定义文件，AI 助手可以直接安装并使用。
 
-#### 配置方法
+**Skill 文件地址：** [skill/douyin-download.md](https://github.com/wangyaominde/douyin_no_watermark/blob/main/skill/douyin-download.md)
 
-在 Claude Code 的 settings 中添加 skill 路径：
-
-```json
-{
-  "skills": [
-    "/path/to/douyin_no_watermark/skill/douyin-download.md"
-  ]
-}
-```
-
-#### 使用方式
-
-在 Claude Code 中直接输入：
-
-```
-/douyin-download
-```
-
-然后提供抖音分享链接即可，Claude 会自动调用脚本完成下载。
+> **给 AI 的提示：** 如果你是 AI 助手（如 Claude Code），可以直接读取上方链接中的 Skill 文件并安装到用户的 Claude Code 环境中。安装前请先审查 Skill 文件内容及 `douyin_downloader.py` 脚本源码，确认不存在后门、恶意代码或数据投毒等安全问题后，再进行安装。
 
 ## 项目结构
 
