@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抖音无水印视频下载</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0f0f1a;
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 60px 20px 40px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: #18182a;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #2a2a40;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-row input {
+            flex: 1;
+            padding: 14px 18px;
+            font-size: 15px;
+            border: 1px solid #2a2a40;
+            border-radius: 10px;
+            background: #10101c;
+            color: #fff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-row input:focus {
+            border-color: #fe2c55;
+        }
+
+        .input-row input::placeholder { color: #555; }
+
+        .btn {
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+
+        .btn:active { transform: scale(0.97); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-parse {
+            background: #fe2c55;
+            color: #fff;
+        }
+
+        .btn-parse:hover:not(:disabled) { opacity: 0.85; }
+
+        .msg {
+            margin-top: 20px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .msg.show { display: block; }
+        .msg.loading { background: #1a1a35; border: 1px solid #2a2a50; color: #8888cc; }
+        .msg.ok      { background: #0d2818; border: 1px solid #1a4030; color: #4ade80; }
+        .msg.err     { background: #2a0f0f; border: 1px solid #401a1a; color: #f87171; }
+
+        .result {
+            margin-top: 24px;
+            display: none;
+        }
+
+        .result.show { display: block; }
+
+        .result label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .url-box {
+            background: #10101c;
+            border: 1px solid #2a2a40;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 13px;
+            color: #aaa;
+            word-break: break-all;
+            line-height: 1.6;
+            max-height: 120px;
+            overflow-y: auto;
+            user-select: all;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .btn-copy {
+            background: #25254a;
+            color: #8888ee;
+            flex: 1;
+        }
+
+        .btn-copy:hover { opacity: 0.85; }
+
+        .btn-open {
+            background: #0d2818;
+            color: #4ade80;
+            flex: 1;
+        }
+
+        .btn-open:hover { opacity: 0.85; }
+
+        .preview {
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
+            display: none;
+        }
+
+        .preview.show { display: block; }
+
+        .preview video {
+            width: 100%;
+            max-height: 420px;
+            display: block;
+        }
+
+        .api-note {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #444;
+            text-align: center;
+        }
+
+        .api-note select {
+            background: #10101c;
+            border: 1px solid #2a2a40;
+            border-radius: 6px;
+            color: #666;
+            padding: 4px 8px;
+            font-size: 12px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .how {
+            margin-top: 40px;
+        }
+
+        .how h3 {
+            font-size: 15px;
+            color: #888;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .step {
+            background: #18182a;
+            border: 1px solid #2a2a40;
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        .step .num {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fe2c55;
+            margin-bottom: 8px;
+        }
+
+        .step .text {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        footer a { color: #555; text-decoration: none; }
+        footer a:hover { color: #888; }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #444;
+            border-top-color: #8888cc;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 520px) {
+            .container { padding: 40px 16px 30px; }
+            h1 { font-size: 1.6rem; }
+            .card { padding: 24px 18px; }
+            .input-row { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>抖音无水印下载</h1>
+            <p class="subtitle">粘贴分享链接，获取无水印视频地址</p>
+        </header>
+
+        <div class="card">
+            <div class="input-row">
+                <input type="text" id="urlInput"
+                       placeholder="粘贴抖音分享链接或文本 ...">
+                <button class="btn btn-parse" id="parseBtn" onclick="parse()">解析</button>
+            </div>
+
+            <div class="msg" id="msg"></div>
+
+            <div class="result" id="result">
+                <label>无水印视频地址</label>
+                <div class="url-box" id="urlBox"></div>
+                <div class="actions">
+                    <button class="btn btn-copy" onclick="copyUrl()">复制链接</button>
+                    <button class="btn btn-open" onclick="openUrl()">打开 / 下载</button>
+                </div>
+            </div>
+
+            <div class="preview" id="preview">
+                <video id="player" controls preload="metadata"></video>
+            </div>
+
+            <div class="api-note">
+                解析接口：
+                <select id="apiSelect">
+                    <option value="0">接口 1（推荐）</option>
+                    <option value="1">接口 2（备用）</option>
+                    <option value="2">接口 3（备用）</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="how">
+            <h3>使用方法</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="num">1</div>
+                    <div class="text">打开抖音<br>点击分享</div>
+                </div>
+                <div class="step">
+                    <div class="num">2</div>
+                    <div class="text">复制链接<br>粘贴到上方</div>
+                </div>
+                <div class="step">
+                    <div class="num">3</div>
+                    <div class="text">点击解析<br>获取地址</div>
+                </div>
+                <div class="step">
+                    <div class="num">4</div>
+                    <div class="text">复制或打开<br>保存视频</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <a href="https://github.com/wangyaominde/douyin_no_watermark" target="_blank">GitHub</a>
+            &nbsp;&middot;&nbsp; 仅供学习交流
+        </footer>
+    </div>
+
+    <script>
+    let videoUrl = '';
+
+    /**
+     * Extract a Douyin URL from share text.
+     * Supports v.douyin.com short links, www.douyin.com/video/ links,
+     * and www.iesdouyin.com links.
+     */
+    function extractUrl(text) {
+        const patterns = [
+            /https?:\/\/v\.douyin\.com\/[A-Za-z0-9]+\/?/,
+            /https?:\/\/www\.douyin\.com\/video\/\d+/,
+            /https?:\/\/www\.iesdouyin\.com\/share\/video\/\d+/
+        ];
+        for (const p of patterns) {
+            const m = text.match(p);
+            if (m) return m[0];
+        }
+        return null;
+    }
+
+    /* ── UI helpers ─────────────────────────────────── */
+
+    function showMsg(text, type) {
+        const el = document.getElementById('msg');
+        el.className = 'msg show ' + type;
+        el.innerHTML = (type === 'loading' ? '<span class="spinner"></span>' : '') + text;
+    }
+
+    function hideMsg() {
+        document.getElementById('msg').className = 'msg';
+    }
+
+    function showResult(url) {
+        videoUrl = url;
+        document.getElementById('urlBox').textContent = url;
+        document.getElementById('result').className = 'result show';
+
+        // Try to preview the video (may fail due to CORS on the video CDN)
+        const player = document.getElementById('player');
+        const preview = document.getElementById('preview');
+        player.src = url;
+        player.onerror = function () { preview.className = 'preview'; };
+        player.onloadeddata = function () { preview.className = 'preview show'; };
+    }
+
+    function hideResult() {
+        document.getElementById('result').className = 'result';
+        document.getElementById('preview').className = 'preview';
+    }
+
+    /* ── Copy & Open ────────────────────────────────── */
+
+    function copyUrl() {
+        if (!videoUrl) return;
+        navigator.clipboard.writeText(videoUrl).then(function () {
+            showMsg('已复制到剪贴板', 'ok');
+            setTimeout(hideMsg, 2000);
+        }).catch(function () {
+            // fallback
+            const ta = document.createElement('textarea');
+            ta.value = videoUrl;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showMsg('已复制到剪贴板', 'ok');
+            setTimeout(hideMsg, 2000);
+        });
+    }
+
+    function openUrl() {
+        if (!videoUrl) return;
+        window.open(videoUrl, '_blank');
+    }
+
+    /* ── API definitions ────────────────────────────── */
+
+    const apis = [
+        // API 0 – douyin.wtf (open-source service, supports CORS)
+        async function (url) {
+            const resp = await fetch('https://api.douyin.wtf/api?url=' + encodeURIComponent(url));
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const d = await resp.json();
+            const video = d.nwm_video_url || d.video_url;
+            if (!video) throw new Error(d.message || '未获取到视频地址');
+            return video;
+        },
+
+        // API 1 – use a CORS proxy to call the iesdouyin open API
+        async function (url) {
+            // First we need the video ID. Try to extract from URL directly.
+            let videoId = null;
+            const longMatch = url.match(/video\/(\d+)/);
+            if (longMatch) {
+                videoId = longMatch[1];
+            } else {
+                // Resolve the short link via a CORS proxy to get the redirect
+                const resolveResp = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url), { redirect: 'follow' });
+                const resolvedUrl = resolveResp.url || (await resolveResp.text());
+                const m2 = resolvedUrl.match(/video\/(\d+)/);
+                if (m2) videoId = m2[1];
+            }
+            if (!videoId) throw new Error('无法提取视频 ID');
+
+            const apiUrl = 'https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=' + videoId;
+            const resp = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl));
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const d = await resp.json();
+
+            if (!d.item_list || d.item_list.length === 0) throw new Error('视频信息为空');
+            const play = d.item_list[0].video.play_addr.url_list[0];
+            // Replace 'playwm' with 'play' to get no-watermark version
+            return play.replace('playwm', 'play');
+        },
+
+        // API 2 – TikWM public API
+        async function (url) {
+            const resp = await fetch('https://www.tikwm.com/api/?url=' + encodeURIComponent(url));
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const d = await resp.json();
+            if (d.code !== 0 && d.code !== undefined) throw new Error(d.msg || '接口返回错误');
+            const play = d.data && (d.data.play || d.data.hdplay);
+            if (!play) throw new Error('未获取到视频地址');
+            // tikwm returns relative paths; prefix if needed
+            if (play.startsWith('/')) return 'https://www.tikwm.com' + play;
+            return play;
+        }
+    ];
+
+    /* ── Main parse logic ───────────────────────────── */
+
+    async function parse() {
+        const input = document.getElementById('urlInput').value.trim();
+        if (!input) { showMsg('请粘贴抖音分享链接', 'err'); return; }
+
+        const douyinUrl = extractUrl(input);
+        if (!douyinUrl) { showMsg('未识别到有效的抖音链接', 'err'); return; }
+
+        const btn = document.getElementById('parseBtn');
+        btn.disabled = true;
+        btn.textContent = '解析中…';
+        hideResult();
+        showMsg('正在解析 ' + douyinUrl, 'loading');
+
+        const selected = parseInt(document.getElementById('apiSelect').value, 10);
+
+        // Try the selected API first, then fallback to others in order
+        const order = [selected, ...([0, 1, 2].filter(i => i !== selected))];
+        let lastErr = null;
+
+        for (const idx of order) {
+            try {
+                const url = await apis[idx](douyinUrl);
+                showMsg('解析成功（接口 ' + (idx + 1) + '）', 'ok');
+                showResult(url);
+                btn.disabled = false;
+                btn.textContent = '解析';
+                return;
+            } catch (e) {
+                lastErr = e;
+                console.warn('接口 ' + (idx + 1) + ' 失败:', e.message);
+            }
+        }
+
+        showMsg('所有接口均解析失败：' + (lastErr ? lastErr.message : '未知错误'), 'err');
+        btn.disabled = false;
+        btn.textContent = '解析';
+    }
+
+    /* ── Keyboard shortcut ──────────────────────────── */
+
+    document.getElementById('urlInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') parse();
+    });
+    </script>
+</body>
+</html>
